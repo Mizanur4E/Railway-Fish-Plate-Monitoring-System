@@ -1,0 +1,57 @@
+#include <SoftwareSerial.h>
+SoftwareSerial SIM900A(10, 11);
+int downPin = 7;
+int upPin = 8;
+int nup ;
+int ndown ;
+  double def;
+int pitch = 18;
+int nt = 18;
+
+
+
+void setup() {
+  pinMode(downPin, INPUT);
+  pinMode(upPin, INPUT);
+  SIM900A.begin(9600);   // Setting the baud rate of GSM Module
+  Serial.begin(9600);    // Setting the baud rate of Serial Monitor (Arduino)
+  Serial.println ("SIM900A Ready");
+  delay(100);
+
+}
+
+void loop() {
+
+  delay(1000);
+
+  if (digitalRead(downPin) == HIGH || digitalRead(upPin) == HIGH)
+  {
+  SendMessage();
+  }
+  if (SIM900A.available() > 0)
+    Serial.write(SIM900A.read());
+delay(2000);
+
+}
+
+void  SendMessage()
+{
+  Serial.println ("Sending Message");
+  SIM900A.println("AT+CMGF=1");    //Sets the GSM Module in Text Mode
+  delay(1000);
+  SIM900A.println("AT+CMGS=\"+8801764654985\"\r"); //Mobile phone number to send message
+  delay(1000);
+  if (digitalRead(downPin == HIGH))
+  SIM900A.println("Warning.Fishplate Bolt Rotated.");// Messsage content
+  else
+    SIM900A.println("Warning.Fishplate Bolt Rotated.");// Messsage content
+
+  delay(100);
+  Serial.println ("Finish");
+  SIM900A.println((char)26);// ASCII code of CTRL+Z
+  delay(1000);
+  Serial.println ("Message has been sent ->SMS Selesai dikirim");
+
+  delay(1000);
+}
+
